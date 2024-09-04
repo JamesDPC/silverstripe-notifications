@@ -39,6 +39,7 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
                 if($context instanceof \SilverStripe\ORM\DataObject) {
                     $this->contextClass = $context::class;
                 }
+
                 $this->extraData = $data;
             }
         }
