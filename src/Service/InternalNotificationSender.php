@@ -3,6 +3,7 @@
 namespace Symbiote\Notifications\Service;
 
 use Exception;
+use Symbiote\Notifications\Model\NotifiedOn;
 use Symbiote\Notifications\Model\NotificationSender;
 use Symbiote\Notifications\Model\SystemNotification;
 use Symbiote\Notifications\Model\InternalNotification;

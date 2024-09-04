@@ -2,7 +2,9 @@
 
 namespace Symbiote\Notifications\Tests;
 
+use Symbiote\Notifications\Model\NotifiedOn;
 use Symbiote\Notifications\Model\NotificationSender;
+
 
 class DummyNotificationSender implements NotificationSender
 {
