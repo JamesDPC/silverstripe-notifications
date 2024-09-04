@@ -14,15 +14,15 @@ use Symbiote\Notifications\Model\BroadcastNotification;
  */
 class NotificationAdmin extends ModelAdmin
 {
-    private static $managed_models = [
+    private static array $managed_models = [
         SystemNotification::class,
         BroadcastNotification::class,
         InternalNotification::class,
     ];
 
-    private static $url_segment = 'notifications';
+    private static string $url_segment = 'notifications';
 
-    private static $menu_title = 'Notifications';
+    private static string $menu_title = 'Notifications';
 
-    private static $menu_icon = 'symbiote/silverstripe-notifications: images/notifications-icon.svg';
+    private static string $menu_icon = 'symbiote/silverstripe-notifications: images/notifications-icon.svg';
 }

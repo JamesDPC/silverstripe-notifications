@@ -9,7 +9,7 @@ use Symbiote\Notifications\Model\InternalNotification;
 
 class NotifyService
 {
-    public function webEnabledMethods()
+    public function webEnabledMethods(): array
     {
         return [
             'list' => 'GET',
@@ -60,6 +60,7 @@ class NotifyService
                 return true;
             }
         }
+
         return false;
     }
 
@@ -89,9 +90,11 @@ class NotifyService
                     $notification->IsSeen = true;
                     $notification->write();
                 }
+
                 return true;
             }
         }
+
         return false;
     }
 }

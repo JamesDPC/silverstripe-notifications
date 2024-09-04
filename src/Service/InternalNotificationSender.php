@@ -46,6 +46,7 @@ class InternalNotificationSender implements NotificationSender
             // don't send to non-member user object types
             return;
         }
+
         $subject = $notification->format($notification->Title, $context, $user, $data);
 
         $content = $notification->NotificationContent();
@@ -66,7 +67,7 @@ class InternalNotificationSender implements NotificationSender
             $templateData->setField('Body', $message);
             try {
                 $body = $templateData->renderWith($template);
-            } catch (Exception $e) {
+            } catch (Exception) {
                 $body = $message;
             }
         } else {
@@ -74,7 +75,7 @@ class InternalNotificationSender implements NotificationSender
         }
 
         $contextData = array_merge([
-            'ClassName' => get_class($context),
+            'ClassName' => $context::class,
             'ID' => $context->ID,
             'Link' => $context->hasMethod('Link') ? $context->Link() : ''
         ], $data);

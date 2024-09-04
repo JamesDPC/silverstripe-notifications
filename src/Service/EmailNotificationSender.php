@@ -25,12 +25,10 @@ class EmailNotificationSender implements NotificationSender
 
     /**
      * Email Address to send email notifications from
-     *
-     * @var string
      */
-    private static $send_notifications_from = '';
+    private static string $send_notifications_from = '';
 
-    private static $dependencies = [
+    private static array $dependencies = [
         'logger' => '%$Psr\Log\LoggerInterface',
     ];
 
@@ -42,9 +40,7 @@ class EmailNotificationSender implements NotificationSender
     /**
      * Send a notification via email to the selected users
      *
-     * @param SystemNotification           $notification
      * @param NotifiedOn $context
-     * @param array                        $data
      */
     public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
     {
@@ -57,10 +53,8 @@ class EmailNotificationSender implements NotificationSender
     /**
      * Send a notification directly to a single user
      *
-     * @param SystemNotification $notification
      * @param $context
      * @param $user
-     * @param array              $data
      */
     public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
     {
@@ -82,12 +76,12 @@ class EmailNotificationSender implements NotificationSender
             );
         }
 
-        if ($template = $notification->getTemplate()) {
+        if (($template = $notification->getTemplate()) !== '') {
             $templateData = $notification->getTemplateData($context, $user, $data);
             $templateData->setField('Body', $message);
             try {
                 $body = $templateData->renderWith($template);
-            } catch (\Exception $e) {
+            } catch (\Exception) {
                 $body = $message;
             }
         } else {
@@ -103,18 +97,20 @@ class EmailNotificationSender implements NotificationSender
         if (!$from || !$to) {
             return;
         }
+
         // send
         try {
             $email = new Email($from, $to, $subject);
             $email->setBody($body);
             $this->extend('onBeforeSendToUser', $email);
             $email->send();
-        } catch (\Exception $e) {
+        } catch (\Exception $exception) {
             if ($this->logger) {
                 if ($to !== 'admin') {
-                    $this->logger->warning("Failed sending email to $to");
+                    $this->logger->warning("Failed sending email to {$to}");
                 }
-                $this->logger->warning("sendToUser:" . $e->getMessage());
+
+                $this->logger->warning("sendToUser:" . $exception->getMessage());
             }
         }
     }

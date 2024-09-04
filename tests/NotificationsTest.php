@@ -21,10 +21,10 @@ class NotificationsTest extends SapphireTest
         NotifyOnThis::class,
     ];
 
-    public function testNotificationTrigger()
+    public function testNotificationTrigger(): void
     {
         // create a new notification and add it to the object
-        $notification = new SystemNotification();
+        $notification = \Symbiote\Notifications\Model\SystemNotification::create();
         $notification->Title = "Notify on event";
         $notification->Description = 'Notifies on an event occurring';
         $notification->NotificationText = 'This is a notfication to $Member.Email about $NotifyOnThis.Title';
@@ -55,9 +55,9 @@ class NotificationsTest extends SapphireTest
         );
     }
 
-    public function testSpecificChannels()
+    public function testSpecificChannels(): void
     {
-        $notification = new SystemNotification();
+        $notification = \Symbiote\Notifications\Model\SystemNotification::create();
         $notification->Title = "Notify on event";
         $notification->Description = 'Notifies on an event occurring';
         $notification->NotificationText = 'This is a notfication to $Member.Email about $NotifyOnThis.Title';
@@ -87,9 +87,9 @@ class NotificationsTest extends SapphireTest
         );
     }
 
-    public function testSendEmailNotification()
+    public function testSendEmailNotification(): void
     {
-        $notification = new SystemNotification();
+        $notification = \Symbiote\Notifications\Model\SystemNotification::create();
         $notification->Title = "Notify on event";
         $notification->Description = 'Notifies on an event occurring';
         $notification->NotificationText = 'This is a notfication to $Member.Email about $NotifyOnThis.Title';
@@ -119,8 +119,8 @@ class NotificationsTest extends SapphireTest
         $expectedTo = $users[0]->Email;
         $expectedFrom = 'test@test.com';
         $expectedSubject = $notification->Title;
-        $expectedBody = "This is a notfication to $expectedTo about $page->Title";
-        $expectedBody = $notification->format(nl2br($expectedBody), $page); // TODO
+        $expectedBody = "This is a notfication to {$expectedTo} about $page->Title";
+        $notification->format(nl2br($expectedBody), $page); // TODO
 
         $this->assertEmailSent($expectedTo, $expectedFrom, $expectedSubject);
     }

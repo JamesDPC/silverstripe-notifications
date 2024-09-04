@@ -39,28 +39,25 @@ use SilverStripe\Forms\ListboxField;
  */
 class SystemNotification extends DataObject implements PermissionProvider
 {
-    private static $table_name = 'SystemNotification';
+    private static string $table_name = 'SystemNotification';
 
     /**
      * The list of types to allow users to select for being notified on,
      * where the types don't implement NotifiedOn directly.
-     * @var array
      */
-    private static $notify_on = [];
+    private static array $notify_on = [];
 
     /**
      * A list of all the notifications that the system manages.
-     * @var array
      */
-    private static $identifiers = [
+    private static array $identifiers = [
         'BROADCAST'
     ];
 
     /**
      * A list of globally available keywords for all NotifiedOn implementors
-     * @var array
      */
-    private static $global_keywords = [
+    private static array $global_keywords = [
         'Context' => 'The item associated with the notification',
         'Member' => 'The user who triggered the notification',
     ];
@@ -68,9 +65,8 @@ class SystemNotification extends DataObject implements PermissionProvider
     /**
      * If true, notification text can contain html and a wysiwyg editor will be
      * used to create the notification text rather than textarea
-     * @var boolean
      */
-    private static $html_notifications = false;
+    private static bool $html_notifications = false;
 
     /**
      * Name of a template file to render all notifications with
@@ -79,7 +75,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      */
     private static $default_template;
 
-    private static $db = [
+    private static array $db = [
         'Identifier' => 'Varchar',        // used to reference this notification from code
         'Title' => 'Varchar(255)',
         'Description' => 'Text',
@@ -103,13 +99,13 @@ class SystemNotification extends DataObject implements PermissionProvider
 
         $types = array_combine($types, $types);
         unset($types['NotifyOnThis']);
-        if (!$types) {
+        if ($types === []) {
             $types = [];
         }
 
         // Available keywords
         $keywords = $this->getKeywords();
-        if (count($keywords)) {
+        if ($keywords !== []) {
             $availableKeywords = '<div class="field">'.
                 '<div class="middleColumn">'.
                     '<p><u>Available Keywords:</u></p>'.
@@ -123,7 +119,7 @@ class SystemNotification extends DataObject implements PermissionProvider
 
         // Identifiers
         $identifiers = $this->config()->get('identifiers');
-        if (count($identifiers)) {
+        if (count($identifiers) !== 0) {
             $identifiers = array_combine($identifiers, $identifiers);
         }
 
@@ -199,7 +195,6 @@ class SystemNotification extends DataObject implements PermissionProvider
 
     /**
      * Get a list of available keywords to help the cms user know what's available
-     * @return array
      **/
     public function getKeywords(): array
     {
@@ -229,7 +224,6 @@ class SystemNotification extends DataObject implements PermissionProvider
      * Get a list of recipients from the notification with the given context
      * @param  DataObject $context
      *                The context object this notification is attached to.
-     * @return ArrayList
      */
     public function getRecipients(DataObject $context = null): ArrayList
     {
@@ -245,10 +239,8 @@ class SystemNotification extends DataObject implements PermissionProvider
 
         if ($context instanceof Member) {
             $recipients->push($context);
-        } else {
-            if ($context instanceof Group) {
-                $recipients = $context->Members();
-            }
+        } elseif ($context instanceof Group) {
+            $recipients = $context->Members();
         }
 
         // otherwise load with a preconfigured list of recipients
@@ -257,11 +249,6 @@ class SystemNotification extends DataObject implements PermissionProvider
 
     /**
      * Format text with given keywords etc
-     * @param  string     $text
-     * @param  DataObject $context
-     * @param  Member     $user
-     * @param  array      $extraData
-     * @return string
      */
     public function format(string $text, DataObject $context, Member $user, array $extraData = []): string
     {
@@ -271,7 +258,7 @@ class SystemNotification extends DataObject implements PermissionProvider
         $viewer = new SSViewer_FromString($text);
         try {
             $string = $viewer->process($data);
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             $string = $text;
         }
 
@@ -280,21 +267,17 @@ class SystemNotification extends DataObject implements PermissionProvider
 
     /**
      * Get compiled template data to render a string with
-     * @param  NotifiedOn $context
-     * @param  Member     $user
-     * @param  array      $extraData
-     * @return ArrayData
      */
     public function getTemplateData(NotifiedOn $context, Member $user, array $extraData = []): ArrayData
     {
         // useful global data
         $data = [
-            'ThemeDirs' => new ArrayList(SSViewer::get_themes()),
+            'ThemeDirs' => \SilverStripe\ORM\ArrayList::create(SSViewer::get_themes()),
             'SiteConfig' => SiteConfig::current_site_config(),
         ];
 
         // the context object, keyed by it's class name
-        $clsPath = explode('\\', get_class($context));
+        $clsPath = explode('\\', $context::class);
         $data[end($clsPath)] = $context;
         $data['Context'] = $context;
 
@@ -315,16 +298,14 @@ class SystemNotification extends DataObject implements PermissionProvider
 
     /**
      * Get the custom or default template to render this notification with
-     * @return string
      */
     public function getTemplate(): string
     {
-        return $this->CustomTemplate ? $this->CustomTemplate : $this->config()->get('default_template');
+        return $this->CustomTemplate ?: $this->config()->get('default_template');
     }
 
     /**
      * Get the notification content, whether that's html or plain text
-     * @return string
      */
     public function NotificationContent(): string
     {

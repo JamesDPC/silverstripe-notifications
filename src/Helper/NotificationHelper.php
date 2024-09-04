@@ -16,18 +16,12 @@ use SilverStripe\ORM\DataObjectInterface;
 class NotificationHelper
 {
     /**
-     * @var \SilverStripe\ORM\DataObject
-     */
-    private $owner;
-
-    /**
      * @var array
      */
     protected $availableKeywords = [];
 
-    public function __construct(DataObject $owner)
+    public function __construct(private readonly \SilverStripe\ORM\DataObject $owner)
     {
-        $this->owner = $owner;
     }
 
     /**
@@ -35,13 +29,11 @@ class NotificationHelper
      * eg. array(
      *    'keyword' => 'A description'
      * )
-     *
-     * @return array
      */
     public function getAvailableKeywords(): array
     {
         if ($this->availableKeywords === []) {
-            $objectFields = DataObject::getSchema()->databaseFields(get_class($this->owner));
+            $objectFields = DataObject::getSchema()->databaseFields($this->owner::class);
 
             $objectFields['Created'] = 'Created';
             $objectFields['LastEdited'] = 'LastEdited';
@@ -59,15 +51,12 @@ class NotificationHelper
 
     /**
      * Gets a replacement for a keyword
-     *
-     * @param string $keyword
-     * @return string
      */
     public function getKeyword(string $keyword): string
     {
         $k = $this->getAvailableKeywords();
 
-        if ($keyword == 'Link') {
+        if ($keyword === 'Link') {
             $link = Director::makeRelative($this->owner->Link());
 
             return Controller::join_links(Director::absoluteBaseURL(), $link);

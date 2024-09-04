@@ -33,10 +33,12 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
             DataObject $context = null,
             $data = []
         ) {
-            if ($notification) {
+            if ($notification instanceof \Symbiote\Notifications\Model\SystemNotification) {
                 $this->notificationID = $notification->ID;
                 $this->contextID = $context->ID;
-                $this->contextClass = get_class($context);
+                if($context instanceof \SilverStripe\ORM\DataObject) {
+                    $this->contextClass = $context::class;
+                }
                 $this->extraData = $data;
             }
         }
@@ -49,9 +51,6 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
             return SystemNotification::get()->byID($this->notificationID);
         }
 
-        /**
-         * @return \SilverStripe\ORM\DataObject|null
-         */
         public function getContext(): ?DataObject
         {
             if ($this->contextID) {
@@ -61,28 +60,21 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
             return null;
         }
 
-        /**
-         * @return string
-         */
         public function getTitle(): string
         {
             $context = $this->getContext();
             $notification = $this->getNotification();
 
-            if ($context) {
+            if ($context instanceof \SilverStripe\ORM\DataObject) {
                 $title = '';
                 if ($context->hasField('Title')) {
                     $title = $context->Title;
+                } elseif ($context->hasField('Name')) {
+                    $title = $context->Name;
+                } elseif ($context->hasField('Description')) {
+                    $title = $context->Description;
                 } else {
-                    if ($context->hasField('Name')) {
-                        $title = $context->Name;
-                    } else {
-                        if ($context->hasField('Description')) {
-                            $title = $context->Description;
-                        } else {
-                            $title = '#'.$context->ID;
-                        }
-                    }
+                    $title = '#'.$context->ID;
                 }
             } else {
                 $title = $notification->Title;
@@ -91,9 +83,6 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
             return 'Sending notification "'.$notification->Description.'" for '.$title;
         }
 
-        /**
-         * @return string
-         */
         public function getJobType(): string
         {
             $notification = $this->getNotification();
@@ -104,12 +93,10 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
                     foreach ($recipients as $r) {
                         $sendTo[$r->ID] = $r->ClassName;
                     }
-                } else {
-                    if ($recipients instanceof MultiValueField) {
-                        $recipients = $recipients->getValues();
-                        foreach ($recipients as $id) {
-                            $sendTo[$id] = Member::class;
-                        }
+                } elseif ($recipients instanceof MultiValueField) {
+                    $recipients = $recipients->getValues();
+                    foreach ($recipients as $id) {
+                        $sendTo[$id] = Member::class;
                     }
                 }
 
@@ -127,7 +114,7 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
             $remaining = $this->sendTo;
 
             // if there's no more, we're done!
-            if (!count($remaining)) {
+            if (count($remaining) === 0) {
                 $this->isComplete = true;
                 return;
             }

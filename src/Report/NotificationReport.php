@@ -15,18 +15,18 @@ use Symbiote\Notifications\Model\InternalNotification;
 
 class NotificationReport extends Report
 {
-    private static $notification_types = [
+    private static array $notification_types = [
         InternalNotification::class => 'Internal message',
     ];
 
     public function title()
     {
-        return _t(__CLASS__ . '.NOTIFICATION_REPORT', 'Notifications');
+        return _t(self::class . '.NOTIFICATION_REPORT', 'Notifications');
     }
 
     public function group()
     {
-        return _t(__CLASS__ . '.NOTIFICATION_REPORT_TITLE', "Notification reports");
+        return _t(self::class . '.NOTIFICATION_REPORT_TITLE', "Notification reports");
     }
 
     public function sourceRecords($params, $sort, $limit)
@@ -37,12 +37,10 @@ class NotificationReport extends Report
 
         $fromDate = $params['From'] ?? date('Y-m-d', strtotime('-1 month'));
         $toDate = $params['To'] ?? date('Y-m-d');
-
-        $list = $list->filter([
+        return $list->filter([
             'Created:GreaterThan' => $fromDate,
             'Created:LessThanOrEqual' => $toDate
         ]);
-        return $list;
     }
 
     public function columns()
@@ -60,6 +58,7 @@ class NotificationReport extends Report
         if (!isset(self::config()->notification_types[$type])) {
             throw new Exception("Invalid type");
         }
+
         return $type;
     }
 

@@ -21,27 +21,24 @@ class NotificationService
 
     /**
      * The default notification send mechanisms to init with
-     * @var array
      */
-    private static $default_senders = [
+    private static array $default_senders = [
         'email' => EmailNotificationSender::class,
         'internal' => InternalNotificationSender::class,
     ];
 
     /**
      * The list of channels to send to by default
-     * @var array
      */
-    private static $default_channels = [
+    private static array $default_channels = [
         'email',
         'internal',
     ];
 
     /**
      * Should we use the queued jobs approach to sending notifications?
-     * @var Boolean
      */
-    private static $use_queues = true;
+    private static bool $use_queues = true;
 
     /**
      * The objects to use for actually sending a notification, indexed
@@ -69,7 +66,6 @@ class NotificationService
     /**
      * Add a channel that this notification service should use when sending notifications
      * @param string $channel The channel to add
-     * @return \Symbiote\Notifications\Service\NotificationService
      */
     public function addChannel($channel): self
     {
@@ -86,9 +82,8 @@ class NotificationService
     /**
      * Set the list of channels this notification service should use when sending notifications
      * @param array $channels The channels to send to
-     * @return \Symbiote\Notifications\Service\NotificationService
      */
-    public function setChannels($channels)
+    public function setChannels($channels): static
     {
         $this->channels = $channels;
 
@@ -99,7 +94,6 @@ class NotificationService
      * Add a notification sender
      * @param string                    $channel The channel to send through
      * @param NotificationSender|string $sender  The notification channel
-     * @return \Symbiote\Notifications\Service\NotificationService
      */
     public function addSender(string $channel, NotificationSender|string $sender): self
     {
@@ -111,16 +105,12 @@ class NotificationService
 
     /**
      * Add a notification sender to a channel
-     * @param array $senders
-     * @return \Symbiote\Notifications\Service\NotificationService
      */
     public function setSenders(array $senders): self
     {
         $this->senders = [];
-        if (count($senders)) {
-            foreach ($senders as $channel => $sender) {
-                $this->addSender($channel, $sender);
-            }
+        foreach ($senders as $channel => $sender) {
+            $this->addSender($channel, $sender);
         }
 
         return $this;
@@ -133,7 +123,7 @@ class NotificationService
      */
     public function getSender($channel): mixed
     {
-        return isset($this->senders[$channel]) ? $this->senders[$channel] : null;
+        return $this->senders[$channel] ?? null;
     }
 
     /**
@@ -141,7 +131,6 @@ class NotificationService
      * @param string      $identifier The Identifier of the notification event
      * @param DataObject  $context    The context (if relevant) of the object to notify on
      * @param array       $data       Extra data to be sent along with the notification
-     * @param string|null $channel
      */
     public function notify(string $identifier, DataObject $context, array $data = [], ?string $channel = null)
     {
@@ -150,7 +139,7 @@ class NotificationService
             foreach ($notifications as $notification) {
                 if ($notification->NotifyOnClass) {
                     $subclasses = ClassInfo::subclassesFor($notification->NotifyOnClass);
-                    if (!isset($subclasses[strtolower(get_class($context))])) {
+                    if (!isset($subclasses[strtolower($context::class)])) {
                         continue;
                     }
                 }
@@ -182,7 +171,7 @@ class NotificationService
     ) {
         // check to make sure that there are users to send it to. If not, we don't bother with it at all
         $recipients = $notification->getRecipients($context);
-        if (!count($recipients)) {
+        if (count($recipients) === 0) {
             return;
         }
 
@@ -200,6 +189,7 @@ class NotificationService
             if (!is_array($channels)) {
                 $channels = [$channels];
             }
+
             $channels = count($channels) ? $channels : $this->channels;
             foreach ($channels as $channel) {
                 if ($sender = $this->getSender($channel)) {
@@ -211,10 +201,7 @@ class NotificationService
 
     /**
      * Sends a notification directly to a user
-     * @param SystemNotification $notification
-     * @param DataObject         $context
      * @param DataObject         $user
-     * @param array              $extraData
      */
     public function sendToUser(
         SystemNotification $notification,

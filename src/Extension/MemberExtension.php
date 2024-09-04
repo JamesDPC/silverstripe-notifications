@@ -16,7 +16,7 @@ class MemberExtension extends Extension
     {
         $filter = array_merge(
             $filter,
-            ['ToID' => $this->owner->ID]
+            ['ToID' => $this->getOwner()->ID]
         );
 
         $notifications = ArrayList::create();
@@ -32,10 +32,10 @@ class MemberExtension extends Extension
 
     public function getNotificationUsername(): string
     {
-        if ($this->owner->Username) {
-            return $this->owner->Username;
+        if ($this->getOwner()->Username) {
+            return $this->getOwner()->Username;
         }
 
-        return $this->owner->getTitle();
+        return $this->getOwner()->getTitle();
     }
 }

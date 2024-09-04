@@ -15,9 +15,9 @@ use Symbiote\Notifications\Controller\NotificationAdmin;
 
 class BroadcastNotification extends DataObject implements NotifiedOn
 {
-    private static $table_name = 'BroadcastNotification';
+    private static string $table_name = 'BroadcastNotification';
 
-    private static $db = [
+    private static array $db = [
         'Title' => 'Varchar(255)',
         'Content' => 'Text',
         'SendNow' => 'Boolean',
@@ -25,7 +25,7 @@ class BroadcastNotification extends DataObject implements NotifiedOn
         'Context' => 'MultiValueField'
     ];
 
-    private static $many_many = [
+    private static array $many_many = [
         'Groups' => Group::class
     ];
 
@@ -38,6 +38,7 @@ class BroadcastNotification extends DataObject implements NotifiedOn
                 $this
             );
         }
+
         parent::onBeforeWrite();
     }
 
@@ -74,7 +75,6 @@ class BroadcastNotification extends DataObject implements NotifiedOn
     /**
      * Gets an associative array of data that can be accessed in
      * notification fields and templates
-     * @return array
      */
     public function getNotificationTemplateData(): array
     {
@@ -82,6 +82,7 @@ class BroadcastNotification extends DataObject implements NotifiedOn
         if (!is_array($fields)) {
             $fields = [];
         }
+
         $fields['Content'] = $this->Content;
         return $fields;
     }
@@ -95,17 +96,17 @@ class BroadcastNotification extends DataObject implements NotifiedOn
     public function getRecipients($event): ?DataList
     {
         $groupIds = $this->Groups()->column('ID');
-        if (count($groupIds)) {
-            $members = Member::get()->filter('Groups.ID', $groupIds);
-            return $members;
+        if (count($groupIds) !== 0) {
+            return Member::get()->filter('Groups.ID', $groupIds);
         }
+
         return null;
     }
 
     public function Link(): ?string
     {
         $context = $this->Context->getValues();
-        return isset($context['Link']) ? $context['Link'] : null;
+        return $context['Link'] ?? null;
     }
 
     public function canCreate($member = null, $context = [])

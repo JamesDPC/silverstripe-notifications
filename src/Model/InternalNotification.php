@@ -11,9 +11,9 @@ use SilverStripe\Security\Permission;
 
 class InternalNotification extends DataObject
 {
-    private static $table_name = 'InternalNotification';
+    private static string $table_name = 'InternalNotification';
 
-    private static $db = [
+    private static array $db = [
         'Title' => 'Varchar(255)',
         'Message'   => 'Text',
         'SentOn' => 'Datetime',
@@ -22,14 +22,14 @@ class InternalNotification extends DataObject
         'Context' => MultiValueField::class,
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'To'        => Member::class,
         'From'      => Member::class,
         'SourceObject' => DataObject::class,
         'SourceNotification' => SystemNotification::class,
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Title' => 'Title',
         'To.Name' => 'To',
         'SentOn' => 'Sent on',
@@ -37,7 +37,7 @@ class InternalNotification extends DataObject
         'IsRead.Nice' => 'Read?'
     ];
 
-    private static $default_sort = 'ID DESC';
+    private static string $default_sort = 'ID DESC';
 
     public function onBeforeWrite()
     {
@@ -62,9 +62,11 @@ class InternalNotification extends DataObject
         if (!$member) {
             return false;
         }
+
         if (Permission::check('ADMIN')) {
             return true;
         }
+
         return $member && (!$this->ID || $this->ToID == $member->ID || $this->FromID == $member->ID);
     }
 
@@ -74,9 +76,11 @@ class InternalNotification extends DataObject
         if (!$member) {
             return false;
         }
+
         if (Permission::check('ADMIN')) {
             return true;
         }
+
         return $member && (!$this->ID || $this->ToID == $member->ID);
     }
 }
