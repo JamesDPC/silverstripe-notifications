@@ -39,8 +39,6 @@ class EmailNotificationSender implements NotificationSender
 
     /**
      * Send a notification via email to the selected users
-     *
-     * @param NotifiedOn $context
      */
     public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
     {
@@ -52,9 +50,6 @@ class EmailNotificationSender implements NotificationSender
 
     /**
      * Send a notification directly to a single user
-     *
-     * @param $context
-     * @param $user
      */
     public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
     {

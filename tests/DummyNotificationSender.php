@@ -10,11 +10,8 @@ class DummyNotificationSender implements NotificationSender
 
     /**
      * Send a notification via email to the selected users
-     * @param UserNotification $notification
-     * @param                  $context
-     * @param array            $data
      */
-    public function sendNotification($notification, $context, $data)
+    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
     {
         $users = $notification->getRecipients($context);
 
@@ -25,12 +22,8 @@ class DummyNotificationSender implements NotificationSender
 
     /**
      * Send a notification to a single user at a time
-     * @param UserNotification $notification
-     * @param                  $context
-     * @param                  $user
-     * @param array            $data
      */
-    public function sendToUser($notification, $context, $user, $data)
+    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
     {
         $cls = new \stdClass();
         $cls->notification = $notification;

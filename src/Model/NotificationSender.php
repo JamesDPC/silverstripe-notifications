@@ -2,6 +2,9 @@
 
 namespace Symbiote\Notifications\Model;
 
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Security\Member;
+
 /**
  * NotificationSender
  *
@@ -14,12 +17,8 @@ interface NotificationSender
      * Send a notification.
      * Automatically determines the list of users to send to based on the notification
      * object and context
-     *
-     * @param SystemNotification           $notification
-     * @param \SilverStripe\ORM\DataObject $context
-     * @param array                        $data
      */
-    public function sendNotification($notification, $context, $data);
+    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data);
 
     /**
      * Send a notification to a single user at a time
@@ -29,5 +28,5 @@ interface NotificationSender
      * @param \SilverStripe\Security\Member $user
      * @param array                         $data
      */
-    public function sendToUser($notification, $context, $user, $data);
+    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data);
 }

@@ -30,9 +30,8 @@ class NotifyOnThis extends DataObject implements NotifiedOn, TestOnly
      * array(
      *    'keyword' => 'A description'
      * )
-     * @return array
      */
-    public function getAvailableKeywords()
+    public function getAvailableKeywords(): array
     {
         if (!$this->availableKeywords) {
             $objectFields = $this->config()->get('db');

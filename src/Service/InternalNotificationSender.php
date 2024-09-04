@@ -19,12 +19,8 @@ class InternalNotificationSender implements NotificationSender
 {
     /**
      * Send a notification via email to the selected users
-     *
-     * @param SystemNotification           $notification
-     * @param \SilverStripe\ORM\DataObject $context
-     * @param array                        $data
      */
-    public function sendNotification($notification, $context, $data)
+    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
     {
         $users = $notification->getRecipients($context);
         foreach ($users as $user) {
@@ -34,13 +30,8 @@ class InternalNotificationSender implements NotificationSender
 
     /**
      * Send a notification directly to a single user
-     *
-     * @param SystemNotification $notification
-     * @param $context
-     * @param $user
-     * @param array              $data
      */
-    public function sendToUser($notification, $context, $user, $data)
+    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
     {
         if (!($user instanceof Member)) {
             // don't send to non-member user object types

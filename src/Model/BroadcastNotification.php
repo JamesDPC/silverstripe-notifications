@@ -91,13 +91,13 @@ class BroadcastNotification extends DataObject implements NotifiedOn
      * Gets the list of recipients for a given notification event, based on this object's
      * state.
      * @param string $event The Identifier of the notification being sent
-     * @return DataList of Member objects
+     * @return array of Member objects
      */
-    public function getRecipients($event): ?DataList
+    public function getRecipients($event):array
     {
         $groupIds = $this->Groups()->column('ID');
         if (count($groupIds) !== 0) {
-            return Member::get()->filter('Groups.ID', $groupIds);
+            return Member::get()->filter('Groups.ID', $groupIds)->toArray();
         }
 
         return null;
