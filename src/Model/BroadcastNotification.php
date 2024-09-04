@@ -107,7 +107,7 @@ class BroadcastNotification extends DataObject implements NotifiedOn
         return isset($context['Link']) ? $context['Link'] : null;
     }
 
-    public function canCreate($member = null, $context = array())
+    public function canCreate($member = null, $context = [])
     {
         return Permission::check('CMS_ACCESS_' . NotificationAdmin::class) || parent::canCreate($member, $context);
     }

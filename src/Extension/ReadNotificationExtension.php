@@ -6,7 +6,7 @@ use SilverStripe\Core\Extension;
 use SilverStripe\Security\Member;
 use Symbiote\Notifications\Model\InternalNotification;
 
-class ReadNotificationExtension  extends Extension
+class ReadNotificationExtension extends Extension
 {
     public function onBeforeInit()
     {

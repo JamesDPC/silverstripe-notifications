@@ -21,7 +21,8 @@ use Symbiote\Notifications\Model\SystemNotification;
  */
 class EmailNotificationSender implements NotificationSender
 {
-    use Configurable, Extensible;
+    use Configurable;
+    use Extensible;
 
     /**
      * Email Address to send email notifications from
@@ -112,7 +113,7 @@ class EmailNotificationSender implements NotificationSender
         } catch (\Swift_SwiftException $e) {
             if ($this->logger) {
                 if ($to !== 'admin') {
-                    $this->logger->warning("Failed sending email to $to");    
+                    $this->logger->warning("Failed sending email to $to");
                 }
             }
         }

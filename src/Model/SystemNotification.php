@@ -43,8 +43,8 @@ class SystemNotification extends DataObject implements PermissionProvider
     private static $table_name = 'SystemNotification';
 
     /**
-     * The list of types to allow users to select for being notified on, 
-     * where the types don't implement NotifiedOn directly. 
+     * The list of types to allow users to select for being notified on,
+     * where the types don't implement NotifiedOn directly.
      * @var array
      */
     private static $notify_on = [];
@@ -173,7 +173,7 @@ class SystemNotification extends DataObject implements PermissionProvider
             $list = ListboxField::create('Channels', 'Send via channels', $sendChannels);
             $fields->insertBefore('AvailableKeywords', $list);
             $list->setRightTitle('Leave empty to send to all channels');
-        } 
+        }
 
         if ($this->config()->html_notifications) {
             $fields->insertBefore(
@@ -214,7 +214,7 @@ class SystemNotification extends DataObject implements PermissionProvider
             $dummy = singleton($this->NotifyOnClass);
             if ($dummy instanceof NotifiedOn || $dummy->hasMethod('getAvailableKeywords')) {
                 $myKeywords = $dummy->getAvailableKeywords();
-                
+
                 if (is_array($myKeywords)) {
                     foreach ($myKeywords as $keyword => $desc) {
                         $keywords[] = '<strong>'.$keyword.'</strong> - '.$desc;
@@ -237,8 +237,7 @@ class SystemNotification extends DataObject implements PermissionProvider
         $recipients = ArrayList::create();
 
         // if we have a context, use that for returning the recipients
-        if ($context && ($context instanceof NotifiedOn || $context->hasMethod('getRecipients'))) 
-        {
+        if ($context && ($context instanceof NotifiedOn || $context->hasMethod('getRecipients'))) {
             $contextRecipients = $context->getRecipients($this->Identifier);
             if ($contextRecipients) {
                 $recipients->merge($contextRecipients);
@@ -348,7 +347,7 @@ class SystemNotification extends DataObject implements PermissionProvider
         return Permission::check('ADMIN') || Permission::check('SYSTEMNOTIFICATION_DELETE');
     }
 
-    public function canCreate($member = null, $context = array())
+    public function canCreate($member = null, $context = [])
     {
         return Permission::check('ADMIN') || Permission::check('SYSTEMNOTIFICATION_CREATE');
     }

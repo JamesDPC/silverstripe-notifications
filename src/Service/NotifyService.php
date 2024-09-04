@@ -9,11 +9,11 @@ class NotifyService
 {
     public function webEnabledMethods()
     {
-        return array(
+        return [
             'list' => 'GET',
             'read' => 'POST',
             'see' => 'POST'
-        );
+        ];
     }
 
     /**

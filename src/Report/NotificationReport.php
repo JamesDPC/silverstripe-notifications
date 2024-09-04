@@ -15,7 +15,6 @@ use Symbiote\Notifications\Model\InternalNotification;
 
 class NotificationReport extends Report
 {
-
     private static $notification_types = [
         InternalNotification::class => 'Internal message',
     ];
