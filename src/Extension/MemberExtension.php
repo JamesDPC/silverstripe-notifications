@@ -12,7 +12,7 @@ use Symbiote\Notifications\Model\InternalNotification;
 
 class MemberExtension extends Extension
 {
-    public function getNotifications($limit = 10, $offset = 0, $filter = [])
+    public function getNotifications(int $limit = 10, int $offset = 0, array $filter = []): ArrayList
     {
         $filter = array_merge(
             $filter,
@@ -30,7 +30,7 @@ class MemberExtension extends Extension
         return $notifications;
     }
 
-    public function getNotificationUsername()
+    public function getNotificationUsername(): string
     {
         if ($this->owner->Username) {
             return $this->owner->Username;

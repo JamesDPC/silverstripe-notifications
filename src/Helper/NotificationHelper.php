@@ -23,7 +23,7 @@ class NotificationHelper
     /**
      * @var array
      */
-    protected $availableKeywords;
+    protected $availableKeywords = [];
 
     public function __construct(DataObject $owner)
     {
@@ -38,9 +38,9 @@ class NotificationHelper
      *
      * @return array
      */
-    public function getAvailableKeywords()
+    public function getAvailableKeywords(): array
     {
-        if (!$this->availableKeywords) {
+        if ($this->availableKeywords === []) {
             $objectFields = DataObject::getSchema()->databaseFields(get_class($this->owner));
 
             $objectFields['Created'] = 'Created';
@@ -60,10 +60,10 @@ class NotificationHelper
     /**
      * Gets a replacement for a keyword
      *
-     * @param  $keyword
+     * @param string $keyword
      * @return string
      */
-    public function getKeyword($keyword)
+    public function getKeyword(string $keyword): string
     {
         $k = $this->getAvailableKeywords();
 
@@ -77,6 +77,6 @@ class NotificationHelper
             return $this->owner->$keyword;
         }
 
-        return;
+        return '';
     }
 }

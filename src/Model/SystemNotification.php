@@ -2,7 +2,6 @@
 
 namespace Symbiote\Notifications\Model;
 
-use Exception;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -202,7 +201,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      * Get a list of available keywords to help the cms user know what's available
      * @return array
      **/
-    public function getKeywords()
+    public function getKeywords(): array
     {
         $keywords = [];
 
@@ -232,7 +231,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      *                The context object this notification is attached to.
      * @return ArrayList
      */
-    public function getRecipients($context = null)
+    public function getRecipients(DataObject $context = null): ArrayList
     {
         $recipients = ArrayList::create();
 
@@ -264,7 +263,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      * @param  array      $extraData
      * @return string
      */
-    public function format($text, $context, $user = null, $extraData = [])
+    public function format(string $text, DataObject $context, Member $user, array $extraData = []): string
     {
         $data = $this->getTemplateData($context, $user, $extraData);
 
@@ -272,7 +271,7 @@ class SystemNotification extends DataObject implements PermissionProvider
         $viewer = new SSViewer_FromString($text);
         try {
             $string = $viewer->process($data);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $string = $text;
         }
 
@@ -286,7 +285,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      * @param  array      $extraData
      * @return ArrayData
      */
-    public function getTemplateData($context, $user = null, $extraData = [])
+    public function getTemplateData(NotifiedOn $context, Member $user, array $extraData = []): ArrayData
     {
         // useful global data
         $data = [
@@ -318,7 +317,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      * Get the custom or default template to render this notification with
      * @return string
      */
-    public function getTemplate()
+    public function getTemplate(): string
     {
         return $this->CustomTemplate ? $this->CustomTemplate : $this->config()->get('default_template');
     }
@@ -327,7 +326,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      * Get the notification content, whether that's html or plain text
      * @return string
      */
-    public function NotificationContent()
+    public function NotificationContent(): string
     {
         return $this->config()->html_notifications ? $this->NotificationHTML : $this->NotificationText;
     }

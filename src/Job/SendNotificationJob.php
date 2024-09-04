@@ -44,7 +44,7 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
         /**
          * @return \SilverStripe\ORM\DataObject
          */
-        public function getNotification()
+        public function getNotification(): ?DataObject
         {
             return SystemNotification::get()->byID($this->notificationID);
         }
@@ -52,19 +52,19 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
         /**
          * @return \SilverStripe\ORM\DataObject|null
          */
-        public function getContext()
+        public function getContext(): ?DataObject
         {
             if ($this->contextID) {
                 return DataObject::get_by_id($this->contextClass, $this->contextID);
             }
 
-            return;
+            return null;
         }
 
         /**
          * @return string
          */
-        public function getTitle()
+        public function getTitle(): string
         {
             $context = $this->getContext();
             $notification = $this->getNotification();
@@ -94,7 +94,7 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
         /**
          * @return string
          */
-        public function getJobType()
+        public function getJobType(): string
         {
             $notification = $this->getNotification();
             $recipients = $notification->getRecipients($this->getContext());
@@ -129,7 +129,6 @@ if (class_exists('Symbiote\QueuedJobs\Services\AbstractQueuedJob')) {
             // if there's no more, we're done!
             if (!count($remaining)) {
                 $this->isComplete = true;
-
                 return;
             }
 

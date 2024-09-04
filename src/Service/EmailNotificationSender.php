@@ -2,7 +2,6 @@
 
 namespace Symbiote\Notifications\Service;
 
-use Exception;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use SilverStripe\Control\Email\Email;
@@ -29,7 +28,7 @@ class EmailNotificationSender implements NotificationSender
      *
      * @var string
      */
-    private static $send_notifications_from;
+    private static $send_notifications_from = '';
 
     private static $dependencies = [
         'logger' => '%$Psr\Log\LoggerInterface',
@@ -44,10 +43,10 @@ class EmailNotificationSender implements NotificationSender
      * Send a notification via email to the selected users
      *
      * @param SystemNotification           $notification
-     * @param \SilverStripe\ORM\DataObject $context
+     * @param NotifiedOn $context
      * @param array                        $data
      */
-    public function sendNotification($notification, $context, $data)
+    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
     {
         $users = $notification->getRecipients($context);
         foreach ($users as $user) {
@@ -63,7 +62,7 @@ class EmailNotificationSender implements NotificationSender
      * @param $user
      * @param array              $data
      */
-    public function sendToUser($notification, $context, $user, $data)
+    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
     {
         $subject = $notification->format($notification->Title, $context, $user, $data);
 
@@ -88,7 +87,7 @@ class EmailNotificationSender implements NotificationSender
             $templateData->setField('Body', $message);
             try {
                 $body = $templateData->renderWith($template);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $body = $message;
             }
         } else {
@@ -110,11 +109,12 @@ class EmailNotificationSender implements NotificationSender
             $email->setBody($body);
             $this->extend('onBeforeSendToUser', $email);
             $email->send();
-        } catch (\Swift_SwiftException $e) {
+        } catch (\Exception $e) {
             if ($this->logger) {
                 if ($to !== 'admin') {
                     $this->logger->warning("Failed sending email to $to");
                 }
+                $this->logger->warning("sendToUser:" . $e->getMessage());
             }
         }
     }
@@ -123,7 +123,7 @@ class EmailNotificationSender implements NotificationSender
      * @param LoggerInterface $logger
      * @return $this
      */
-    public function setLogger($logger)
+    public function setLogger($logger): self
     {
         $this->logger = $logger;
 

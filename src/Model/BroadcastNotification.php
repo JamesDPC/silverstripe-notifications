@@ -2,6 +2,7 @@
 
 namespace Symbiote\Notifications\Model;
 
+use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Group;
 use SilverStripe\Security\Member;
@@ -63,7 +64,7 @@ class BroadcastNotification extends DataObject implements NotifiedOn
         return $fields;
     }
 
-    public function getAvailableKeywords()
+    public function getAvailableKeywords(): array
     {
         $fields = $this->getNotificationTemplateData();
         $names = array_keys($fields);
@@ -75,7 +76,7 @@ class BroadcastNotification extends DataObject implements NotifiedOn
      * notification fields and templates
      * @return array
      */
-    public function getNotificationTemplateData()
+    public function getNotificationTemplateData(): array
     {
         $fields = $this->Context->getValues();
         if (!is_array($fields)) {
@@ -89,19 +90,19 @@ class BroadcastNotification extends DataObject implements NotifiedOn
      * Gets the list of recipients for a given notification event, based on this object's
      * state.
      * @param string $event The Identifier of the notification being sent
-     * @return array An array of Member objects
+     * @return DataList of Member objects
      */
-    public function getRecipients($event)
+    public function getRecipients($event): ?DataList
     {
         $groupIds = $this->Groups()->column('ID');
         if (count($groupIds)) {
             $members = Member::get()->filter('Groups.ID', $groupIds);
             return $members;
         }
-        return [];
+        return null;
     }
 
-    public function Link()
+    public function Link(): ?string
     {
         $context = $this->Context->getValues();
         return isset($context['Link']) ? $context['Link'] : null;

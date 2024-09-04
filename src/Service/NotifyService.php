@@ -2,7 +2,9 @@
 
 namespace Symbiote\Notifications\Service;
 
+use SilverStripe\ORM\DataList;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 use Symbiote\Notifications\Model\InternalNotification;
 
 class NotifyService
@@ -19,14 +21,12 @@ class NotifyService
     /**
      * List all the notifications a user has, on a particular item,
      * and/or of a particular type
-     *
-     * @return DataList|null
      */
-    public function list()
+    public function list(): ?DataList
     {
-        $member = Member::currentUser();
+        $member = Security::getCurrentUser();
         if (!$member) {
-            return false;
+            return null;
         }
 
         return $member->getNotifications();
@@ -38,11 +38,11 @@ class NotifyService
      *
      * @param string|int $ID The ID of an InternalNotification for the current
      * logged in Member
-     * @return boolean true when marked read otherwise false
+     * @return bool true when marked read otherwise false
      */
-    public function read($ID)
+    public function read($ID): bool
     {
-        $member = Member::currentUser();
+        $member = Security::getCurrentUser();
         if (!$member) {
             return false;
         }
@@ -69,11 +69,11 @@ class NotifyService
      *
      * @param string|int $ID The ID of an InternalNotification for the current
      * logged in Member
-     * @return boolean true when marked seen otherwise false
+     * @return bool true when marked seen otherwise false
      */
-    public function see($ID)
+    public function see($ID): bool
     {
-        $member = Member::currentUser();
+        $member = Security::getCurrentUser();
         if (!$member) {
             return false;
         }

@@ -54,11 +54,11 @@ class NotificationService
      * The list of channels to send to
      * @var array
      */
-    protected $channels;
+    protected $channels = [];
 
     public function __construct()
     {
-        if (!ClassInfo::exists(QueuedJobService::class)) {
+        if (!class_exists(QueuedJobService::class)) {
             $this->config()->use_queues = false;
         }
 
@@ -71,14 +71,14 @@ class NotificationService
      * @param string $channel The channel to add
      * @return \Symbiote\Notifications\Service\NotificationService
      */
-    public function addChannel($channel)
+    public function addChannel($channel): self
     {
         $this->channels[] = $channel;
 
         return $this;
     }
 
-    public function getChannels()
+    public function getChannels(): array
     {
         return $this->channels;
     }
@@ -101,7 +101,7 @@ class NotificationService
      * @param NotificationSender|string $sender  The notification channel
      * @return \Symbiote\Notifications\Service\NotificationService
      */
-    public function addSender($channel, $sender)
+    public function addSender(string $channel, NotificationSender|string $sender): self
     {
         $sender = is_string($sender) ? singleton($sender) : $sender;
         $this->senders[$channel] = $sender;
@@ -114,7 +114,7 @@ class NotificationService
      * @param array $senders
      * @return \Symbiote\Notifications\Service\NotificationService
      */
-    public function setSenders($senders)
+    public function setSenders(array $senders): self
     {
         $this->senders = [];
         if (count($senders)) {
@@ -131,7 +131,7 @@ class NotificationService
      * @param string $channel
      * @return mixed|null
      */
-    public function getSender($channel)
+    public function getSender($channel): mixed
     {
         return isset($this->senders[$channel]) ? $this->senders[$channel] : null;
     }
@@ -143,7 +143,7 @@ class NotificationService
      * @param array       $data       Extra data to be sent along with the notification
      * @param string|null $channel
      */
-    public function notify($identifier, $context, $data = [], $channel = null)
+    public function notify(string $identifier, DataObject $context, array $data = [], ?string $channel = null)
     {
         // okay, lets find any notification set up with this identifier
         if ($notifications = SystemNotification::get()->filter('Identifier', $identifier)) {
@@ -171,14 +171,14 @@ class NotificationService
      * @param SystemNotification $notification The configured notification object
      * @param DataObject         $context      The context of the notification to send
      * @param array              $extraData    Any extra data to add into the notification text
-     * @param string             $channels     The specific channels to send through. If not set, just
+     * @param array             $channels     The specific channels to send through. If not set, just
      *                                         sends to the default configured
      */
     public function sendNotification(
         SystemNotification $notification,
         DataObject $context,
-        $extraData = [],
-        $channels = null
+        array $extraData = [],
+        array $channels = []
     ) {
         // check to make sure that there are users to send it to. If not, we don't bother with it at all
         $recipients = $notification->getRecipients($context);
@@ -187,7 +187,7 @@ class NotificationService
         }
 
         // if we've got queues and a large number of recipients, lets send via a queued job instead
-        if ($this->config()->get('use_queues') && count($recipients) > 5) {
+        if (class_exists(QueuedJobService::class) && $this->config()->get('use_queues') && count($recipients) > 5) {
             $extraData['SEND_CHANNELS'] = $channels;
             singleton(QueuedJobService::class)->queueJob(
                 new SendNotificationJob(
@@ -220,7 +220,7 @@ class NotificationService
         SystemNotification $notification,
         DataObject $context,
         $user,
-        $extraData = []
+        array $extraData = []
     ) {
         $channels = $this->channels;
         if ($extraData && isset($extraData['SEND_CHANNELS'])) {
