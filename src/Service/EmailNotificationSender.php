@@ -9,6 +9,7 @@ use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use Symbiote\Notifications\Model\NotifiedOn;
 use Symbiote\Notifications\Model\NotificationSender;
@@ -42,7 +43,7 @@ class EmailNotificationSender implements NotificationSender
     /**
      * Send a notification via email to the selected users
      */
-    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
+    public function sendNotification(SystemNotification $notification, DataObject $context, array $data)
     {
         $users = $notification->getRecipients($context);
         foreach ($users as $user) {
@@ -53,7 +54,7 @@ class EmailNotificationSender implements NotificationSender
     /**
      * Send a notification directly to a single user
      */
-    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
+    public function sendToUser(SystemNotification $notification, DataObject $context, Member $user, array $data)
     {
         $subject = $notification->format($notification->Title, $context, $user, $data);
 

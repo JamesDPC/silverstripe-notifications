@@ -73,7 +73,7 @@ class SystemNotification extends DataObject implements PermissionProvider
      * Note: it's up to the NotificationSender to decide whether or not to use it
      * @var string
      */
-    private static $default_template;
+    private static string $default_template = '';
 
     private static array $db = [
         'Identifier' => 'Varchar',        // used to reference this notification from code
@@ -268,7 +268,7 @@ class SystemNotification extends DataObject implements PermissionProvider
     /**
      * Get compiled template data to render a string with
      */
-    public function getTemplateData(NotifiedOn $context, Member $user, array $extraData = []): ArrayData
+    public function getTemplateData(DataObject $context, Member $user, array $extraData = []): ArrayData
     {
         // useful global data
         $data = [
@@ -301,7 +301,11 @@ class SystemNotification extends DataObject implements PermissionProvider
      */
     public function getTemplate(): string
     {
-        return $this->CustomTemplate ?: $this->config()->get('default_template');
+        $template = $this->CustomTemplate ?? '';
+        if($template === '') {
+            $template = $this->config()->get('default_template') ?? '';
+        }
+        return $template;
     }
 
     /**

@@ -8,7 +8,9 @@ use Symbiote\Notifications\Model\NotificationSender;
 use Symbiote\Notifications\Model\SystemNotification;
 use Symbiote\Notifications\Model\InternalNotification;
 use SilverStripe\Security\Member;
+use SilverStripe\Security\Security;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\ORM\DataObject;
 
 /**
  * EmailNotificationSender
@@ -21,7 +23,7 @@ class InternalNotificationSender implements NotificationSender
     /**
      * Send a notification via email to the selected users
      */
-    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
+    public function sendNotification(SystemNotification $notification, DataObject $context, array $data)
     {
         $users = $notification->getRecipients($context);
         foreach ($users as $user) {
@@ -32,7 +34,7 @@ class InternalNotificationSender implements NotificationSender
     /**
      * Send a notification directly to a single user
      */
-    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
+    public function sendToUser(SystemNotification $notification, DataObject $context, Member $user, array $data)
     {
         if (!($user instanceof Member)) {
             // don't send to non-member user object types
@@ -72,11 +74,12 @@ class InternalNotificationSender implements NotificationSender
             'Link' => $context->hasMethod('Link') ? $context->Link() : ''
         ], $data);
 
+        $currentUser = Security::getCurrentUser();
         $notice = InternalNotification::create([
             'Title' => $subject,
             'Message' => $body,
             'ToID'      => $user->ID,
-            'FromID'    => Member::currentUserID(),
+            'FromID'    => $currentUser ? $currentUser->ID : null,
             'SentOn'    => date('Y-m-d H:i:s'),
             'SourceObjectID' => $context->ID,
             'SourceNotificationID' => $notification->ID,

@@ -18,7 +18,7 @@ interface NotificationSender
      * Automatically determines the list of users to send to based on the notification
      * object and context
      */
-    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data);
+    public function sendNotification(SystemNotification $notification, DataObject $context, array $data);
 
     /**
      * Send a notification to a single user at a time
@@ -28,5 +28,5 @@ interface NotificationSender
      * @param \SilverStripe\Security\Member $user
      * @param array                         $data
      */
-    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data);
+    public function sendToUser(SystemNotification $notification, DataObject $context, Member $user, array $data);
 }
