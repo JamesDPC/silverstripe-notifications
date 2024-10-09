@@ -2,9 +2,11 @@
 
 namespace Symbiote\Notifications\Tests;
 
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use Symbiote\Notifications\Model\NotifiedOn;
 use Symbiote\Notifications\Model\NotificationSender;
+use Symbiote\Notifications\Model\SystemNotification;
 
 
 class DummyNotificationSender implements NotificationSender
@@ -14,7 +16,7 @@ class DummyNotificationSender implements NotificationSender
     /**
      * Send a notification via email to the selected users
      */
-    public function sendNotification(SystemNotification $notification, NotifiedOn $context, array $data)
+    public function sendNotification(SystemNotification $notification, DataObject $context, array $data)
     {
         $users = $notification->getRecipients($context);
 
@@ -26,7 +28,7 @@ class DummyNotificationSender implements NotificationSender
     /**
      * Send a notification to a single user at a time
      */
-    public function sendToUser(SystemNotification $notification, NotifiedOn $context, Member $user, array $data)
+    public function sendToUser(SystemNotification $notification, DataObject $context, Member $user, array $data)
     {
         $cls = new \stdClass();
         $cls->notification = $notification;
