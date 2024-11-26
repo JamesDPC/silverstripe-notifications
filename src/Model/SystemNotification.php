@@ -250,7 +250,7 @@ class SystemNotification extends DataObject implements PermissionProvider
     /**
      * Format text with given keywords etc
      */
-    public function format(string $text, DataObject $context, Member $user, array $extraData = []): string
+    public function format(string $text, DataObject $context, $user, array $extraData = []): string
     {
         $data = $this->getTemplateData($context, $user, $extraData);
 
@@ -268,7 +268,7 @@ class SystemNotification extends DataObject implements PermissionProvider
     /**
      * Get compiled template data to render a string with
      */
-    public function getTemplateData(DataObject $context, Member $user, array $extraData = []): ArrayData
+    public function getTemplateData(DataObject $context, $user, array $extraData = []): ArrayData
     {
         // useful global data
         $data = [

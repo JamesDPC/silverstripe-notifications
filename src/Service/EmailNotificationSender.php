@@ -54,7 +54,7 @@ class EmailNotificationSender implements NotificationSender
     /**
      * Send a notification directly to a single user
      */
-    public function sendToUser(SystemNotification $notification, DataObject $context, Member $user, array $data)
+    public function sendToUser(SystemNotification $notification, DataObject $context, $user, array $data)
     {
         $subject = $notification->format($notification->Title, $context, $user, $data);
 

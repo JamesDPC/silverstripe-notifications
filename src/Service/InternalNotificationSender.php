@@ -34,7 +34,7 @@ class InternalNotificationSender implements NotificationSender
     /**
      * Send a notification directly to a single user
      */
-    public function sendToUser(SystemNotification $notification, DataObject $context, Member $user, array $data)
+    public function sendToUser(SystemNotification $notification, DataObject $context, $user, array $data)
     {
         if (!($user instanceof Member)) {
             // don't send to non-member user object types
