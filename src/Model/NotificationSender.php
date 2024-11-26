@@ -25,8 +25,8 @@ interface NotificationSender
      *
      * @param SystemNotification            $notification
      * @param \SilverStripe\ORM\DataObject  $context
-     * @param \SilverStripe\Security\Member $user
+     * @param object $user
      * @param array                         $data
      */
-    public function sendToUser(SystemNotification $notification, DataObject $context, $user, array $data);
+    public function sendToUser(SystemNotification $notification, DataObject $context, object $user, array $data);
 }

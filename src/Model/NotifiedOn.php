@@ -26,6 +26,10 @@ interface NotifiedOn
     /**
      * Gets the list of recipients for a given notification event, based on this object's
      * state.
+     * @return array each value in an array is an object
+     * In some cases the value must be a Member (InternalNotificationSender)
+     * In other cases (EmailNotificationSender) it can be an object with an Email property getEmailAddress method
+     *
      */
     public function getRecipients(string $event): array;
 }

@@ -201,12 +201,12 @@ class NotificationService
 
     /**
      * Sends a notification directly to a user
-     * @param DataObject         $user
+     * @param object $user
      */
     public function sendToUser(
         SystemNotification $notification,
         DataObject $context,
-        $user,
+        object $user,
         array $extraData = []
     ) {
         $channels = $this->channels;

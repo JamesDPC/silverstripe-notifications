@@ -28,7 +28,7 @@ class DummyNotificationSender implements NotificationSender
     /**
      * Send a notification to a single user at a time
      */
-    public function sendToUser(SystemNotification $notification, DataObject $context, $user, array $data)
+    public function sendToUser(SystemNotification $notification, DataObject $context, object $user, array $data)
     {
         $cls = new \stdClass();
         $cls->notification = $notification;
