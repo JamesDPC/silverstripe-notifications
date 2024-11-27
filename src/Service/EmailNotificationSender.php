@@ -98,7 +98,7 @@ class EmailNotificationSender implements NotificationSender
 
         // send
         try {
-            $email = new Email($from, $to, $subject);
+            $email = Email::create($from, $to, $subject);
             $email->setBody($body);
             $this->extend('onBeforeSendToUser', $email);
             $email->send();
