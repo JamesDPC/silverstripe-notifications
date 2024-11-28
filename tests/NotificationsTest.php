@@ -121,7 +121,7 @@ class NotificationsTest extends SapphireTest
         $expectedFrom = 'test@test.com';
         $expectedSubject = $notification->Title;
         $expectedBody = "This is a notfication to {$expectedTo} about $page->Title";
-        $notification->format(nl2br($expectedBody), $page); // TODO
+        $notification->format($expectedBody, $page); // TODO
 
         $this->assertEmailSent($expectedTo, $expectedFrom, $expectedSubject);
     }

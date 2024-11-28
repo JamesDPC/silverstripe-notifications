@@ -67,7 +67,7 @@ class EmailNotificationSender implements NotificationSender
             );
         } else {
             $message = $notification->format(
-                nl2br($notification->NotificationContent()),
+                $notification->NotificationContent(),
                 $context,
                 $user,
                 $data
