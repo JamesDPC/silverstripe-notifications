@@ -86,6 +86,27 @@ class SystemNotification extends DataObject implements PermissionProvider
         'CustomTemplate' => 'Varchar',
     ];
 
+    private static array $summary_fields = [
+        'Identifier' => 'Identifier',        // used to reference this notification from code
+        'Title' => 'Title',
+        'Description' => 'Description',
+        'ChannelsSummary' => 'Channels'
+    ];
+
+    public function getChannelsSummary() {
+        try {
+            $values = json_decode($this->Channels);
+            if(is_array($values)) {
+                $values = array_map('ucfirst', $values);
+                return htmlspecialchars(implode(",", $values));
+            } else {
+                return '';
+            }
+        } catch (\Exception $e) {
+            return '';
+        }
+    }
+
     /**
      * @return FieldList
      */
