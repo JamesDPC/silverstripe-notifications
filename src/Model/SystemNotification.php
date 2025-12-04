@@ -277,11 +277,7 @@ class SystemNotification extends DataObject implements PermissionProvider
 
         // render
         $viewer = new SSViewer_FromString($text);
-        try {
-            $string = $viewer->process($data);
-        } catch (\Exception) {
-            $string = $text;
-        }
+        $string = $viewer->process($data);
 
         return $string;
     }
